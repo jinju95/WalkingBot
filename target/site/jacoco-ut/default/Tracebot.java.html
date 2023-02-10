@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Tracebot.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">WalkingBot</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">Tracebot.java</span></div><h1>Tracebot.java</h1><pre class="source lang-java linenums">
+import java.util.Scanner;
+
+<span class="fc" id="L4">public class Tracebot {</span>
+	static int x;
+	static int y;
+	static int floorlimit;
+	static boolean penDown;
+	static int[][] floor;
+	static char direction;
+
+	public static void main(String[] args) {
+<span class="nc" id="L13">		getCommand();</span>
+<span class="nc" id="L14">	}</span>
+	public void setPenDown(boolean penDown) {
+<span class="fc" id="L16">		Tracebot.penDown = penDown;</span>
+<span class="fc" id="L17">	}</span>
+
+	public static void getCommand(){
+<span class="fc" id="L20">		try (Scanner in = new Scanner(System.in)) {</span>
+<span class="fc" id="L21">			System.out.print(&quot;Welcome to RoboticPen!!!\n&quot;</span>
+					+ &quot;Use below commands!!!\n&quot;
+					+ &quot;[U|u] Pen up\r\n&quot;
+					+ &quot;[D|d] Pen down\r\n&quot;
+					+ &quot;[R|r] Turn right\r\n&quot;
+					+ &quot;[L|l] Turn left\r\n&quot;
+					+ &quot;[M s|m s] Move forward s spaces (s is a non-negative integer)\r\n&quot;
+					+ &quot;[P|p] Print the floor mapped\r\n&quot;
+					+ &quot;[C|c] Print current position of the pen and whether it is up or down and its\r\n&quot;
+					+ &quot;facing direction\r\n&quot;
+					+ &quot;[Q|q] Stop the program\r\n&quot;
+					+ &quot;[I n|i n] Initialize the system: The values of the array floor are zeros and the robot\r\n&quot;
+					+ &quot;is back to [0, 0], pen up and facing north. n size of the array, an integer\r\n&quot;
+					+ &quot;greater than zero\n&quot;);
+<span class="fc" id="L35">			System.out.print(&quot;Enter command: &quot;);</span>
+<span class="fc" id="L36">			String command = in.nextLine();</span>
+<span class="fc" id="L37">			  char justCode = command.charAt(0);</span>
+<span class="pc bpc" id="L38" title="1 of 4 branches missed.">			while (!((justCode =='q')|| (justCode =='Q'))) {			    </span>
+<span class="pc bpc" id="L39" title="5 of 10 branches missed.">				switch (justCode) {</span>
+				case 'I':
+				case 'i':
+<span class="fc" id="L42">					int floorSize = Integer.parseInt(command.substring(2).trim());</span>
+<span class="pc bpc" id="L43" title="1 of 2 branches missed.">					if(floorSize&gt;0) {</span>
+<span class="fc" id="L44">					initializeFloor(floorSize);</span>
+<span class="fc" id="L45">					    System.out.print(&quot; floor intialized to &quot;+floorSize+&quot;X&quot;+floorSize);</span>
+					} 
+					else
+<span class="nc" id="L48">						System.out.print(&quot; give the command and a positive value again!!!&quot;);</span>
+<span class="nc" id="L49">					break;</span>
+				case 'C':
+				case 'c':
+<span class="nc" id="L52">					printPosition();</span>
+<span class="nc" id="L53">					break;</span>
+				case 'D':
+				case 'd':
+<span class="fc" id="L56">					penDown = true;</span>
+<span class="fc" id="L57">					break;</span>
+				case 'U':
+				case 'u':
+<span class="fc" id="L60">					penDown = false;</span>
+<span class="fc" id="L61">					break;</span>
+				case 'M':
+				case 'm':
+<span class="fc" id="L64">					int steps = Integer.parseInt(command.substring(2).trim());</span>
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">					if(steps&gt;0)</span>
+<span class="fc" id="L66">						move(steps);</span>
+					else
+<span class="nc" id="L68">						System.out.print(&quot;\n give the command and a positive value again!!!&quot;);</span>
+<span class="nc" id="L69">					break;</span>
+				case 'R':
+				case 'r':
+<span class="fc" id="L72">					turnRight(Tracebot.direction);</span>
+<span class="fc" id="L73">					break;</span>
+				case 'L':
+				case 'l':
+<span class="nc" id="L76">					turnLeft(Tracebot.direction);</span>
+<span class="nc" id="L77">					break;</span>
+				case 'P':
+				case 'p':
+<span class="nc" id="L80">					System.out.println(printFloor());</span>
+<span class="nc" id="L81">					break;</span>
+				case 'Q':
+				case 'q':
+<span class="nc" id="L84">					System.out.println(&quot;System to exit!&quot;);</span>
+<span class="nc" id="L85">					break;</span>
+				default:
+<span class="nc" id="L87">					System.out.println(&quot;Invalid command. Please try again.&quot;);</span>
+					break;
+				}
+
+<span class="fc" id="L91">				System.out.print(&quot; \nEnter command: &quot;);</span>
+<span class="fc" id="L92">				command = in.nextLine();</span>
+<span class="fc" id="L93">				justCode = command.charAt(0);</span>
+
+			}
+		}
+<span class="nc" id="L97">		catch (Exception e){</span>
+<span class="nc" id="L98">			System.out.println(&quot;Wrong input, please startover!&quot;+e.getMessage());</span>
+			
+<span class="fc" id="L100">		}</span>
+<span class="fc" id="L101">	}</span>
+
+	public static void initializeFloor(int size) {
+<span class="fc" id="L104">		floor = new int[size][size];</span>
+<span class="fc" id="L105">		floorlimit = size;</span>
+<span class="fc" id="L106">		x = 0;</span>
+<span class="fc" id="L107">		y = 0;</span>
+<span class="fc" id="L108">		direction = 'N';</span>
+<span class="fc" id="L109">		penDown = false;</span>
+<span class="fc" id="L110">	}</span>
+	public static void turnRight(char direction) {
+<span class="pc bpc" id="L112" title="1 of 5 branches missed.">		switch(direction) {</span>
+		case 'N':
+<span class="fc" id="L114">			Tracebot.direction = 'E';</span>
+<span class="fc" id="L115">			break;</span>
+		case 'E':
+<span class="fc" id="L117">			Tracebot.direction = 'S';</span>
+<span class="fc" id="L118">			break;</span>
+		case 'S':
+<span class="fc" id="L120">			Tracebot.direction = 'W';</span>
+<span class="fc" id="L121">			break;</span>
+		case 'W':
+<span class="fc" id="L123">			Tracebot.direction = 'N';</span>
+			break;
+		}
+<span class="fc" id="L126">	}</span>
+
+	public static void turnLeft(char direction) {
+<span class="pc bpc" id="L129" title="1 of 5 branches missed.">		switch(direction) {</span>
+		case 'N':
+<span class="fc" id="L131">			Tracebot.direction = 'W';</span>
+<span class="fc" id="L132">			break;</span>
+		case 'W':
+<span class="fc" id="L134">			Tracebot.direction = 'S';</span>
+<span class="fc" id="L135">			break;</span>
+		case 'S':
+<span class="fc" id="L137">			Tracebot.direction = 'E';</span>
+<span class="fc" id="L138">			break;</span>
+		case 'E':
+<span class="fc" id="L140">			Tracebot.direction = 'N';</span>
+			break;
+		}
+<span class="fc" id="L143">	}</span>
+
+	public static void move(int spaces) {
+<span class="pc bpc" id="L146" title="1 of 5 branches missed.">		switch(direction) {</span>
+		case 'N':
+<span class="fc" id="L148">			y = y + spaces;</span>
+<span class="fc" id="L149">			break;</span>
+		case 'E':
+<span class="fc" id="L151">			x = x + spaces;</span>
+<span class="fc" id="L152">			break;</span>
+		case 'S':
+<span class="fc" id="L154">			y = y - spaces;</span>
+<span class="fc" id="L155">			break;</span>
+		case 'W':
+<span class="fc" id="L157">			x = x - spaces;</span>
+			break;
+		}
+<span class="fc bfc" id="L160" title="All 2 branches covered.">		if (penDown) {</span>
+<span class="pc bpc" id="L161" title="1 of 5 branches missed.">			switch(direction) {</span>
+			case 'S':
+<span class="fc bfc" id="L163" title="All 2 branches covered.">				for (int i = y + spaces; i &gt; y; i--) {</span>
+<span class="fc" id="L164">					floor[x][i] = 1;</span>
+				}
+<span class="fc" id="L166">				break;</span>
+			case 'E':
+<span class="fc bfc" id="L168" title="All 2 branches covered.">				for (int i = x - spaces; i &lt; x; i++) {</span>
+<span class="fc" id="L169">					floor[i][y] = 1;</span>
+				}
+<span class="fc" id="L171">				break;</span>
+			case 'N':
+<span class="fc bfc" id="L173" title="All 2 branches covered.">				for (int i = y - spaces; i &lt; y; i++) {</span>
+<span class="fc" id="L174">					floor[x][i] = 1;</span>
+				}
+<span class="fc" id="L176">				break;</span>
+			case 'W':
+<span class="fc bfc" id="L178" title="All 2 branches covered.">				for (int i = x + spaces; i &gt; x; i--) {</span>
+<span class="fc" id="L179">					floor[i][y] = 1;</span>
+				}
+				break;
+			}
+		}
+<span class="fc" id="L184">}</span>
+
+	public static void printPosition() {
+<span class="pc bpc" id="L187" title="1 of 2 branches missed.">		System.out.println(&quot;Position: &quot; + x + &quot;, &quot; + y + &quot; - Pen: &quot; + (penDown ? &quot;down&quot; : &quot;up&quot;) + &quot; - Facing: &quot; + direction);</span>
+<span class="fc" id="L188">	}</span>
+
+	public static String printFloor() {
+
+<span class="fc" id="L192">		StringBuilder sb = new StringBuilder();</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">		for (int i = floor.length - 1; i &gt;= 0; i--) {</span>
+
+<span class="fc bfc" id="L195" title="All 2 branches covered.">			for (int j = 0; j &lt; floor[0].length; j++) {</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">				sb.append(floor[j][i] == 1 ? &quot;* &quot; : &quot;  &quot;);</span>
+			}
+<span class="fc" id="L198">			sb.append(&quot;\n&quot;);</span>
+		}
+<span class="fc" id="L200">		return sb.toString();</span>
+	}
+
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
